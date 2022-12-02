@@ -4,9 +4,11 @@
  */
 import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import qs from 'qs'
 import { message } from 'antd'
 import { IResult } from '../types/users'
-import qs from 'qs'
+import { postUrl } from '../config/config'
+
 
 const pedding = new Map()
 const addPedding = (config:AxiosRequestConfig) => {
@@ -43,7 +45,7 @@ const removeAll = () => {
 }
 export class Request {
   instance:AxiosInstance;
-  baseConfig:AxiosRequestConfig = { baseURL:'http://localhost:3001' };
+  baseConfig:AxiosRequestConfig = { baseURL:postUrl };
   constructor(config:AxiosRequestConfig) {
     this.instance = axios.create({...this.baseConfig, ...config})
     // 请求拦截器

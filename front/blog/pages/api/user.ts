@@ -17,3 +17,8 @@ export const toRegister = (params:ILogin) => {
 export const getUsers = () => {
   return Request.get(`/article/post`)
 }
+
+// 上传接口
+export const upload = (params:any) => {
+  return Request.post(`/article/upload`, params)
+}

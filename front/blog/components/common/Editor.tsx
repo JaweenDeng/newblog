@@ -3,11 +3,10 @@
  * @Description: 富文本编辑器
  */
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
-
 import React, { useState, useEffect } from 'react'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
 import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
-
+import { postUrl } from '../../config/config'
 function MyEditor() {
   // editor 实例
   const [editor, setEditor] = useState<IDomEditor | null>(null)   // TS 语法
@@ -35,8 +34,8 @@ function MyEditor() {
   editorConfig.MENU_CONF = {
     //配置上传图片
     uploadImage:{
-      server: 'http://localhost:3001/article/common/upload',
-      fieldName: 'custom-field-name'
+      server: `${postUrl}/article/common/upload`,
+      fieldName: 'file'
     }
   }
   // 及时销毁 editor ，重要！
