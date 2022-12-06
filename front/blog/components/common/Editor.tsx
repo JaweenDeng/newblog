@@ -1,4 +1,10 @@
 /*
+ * @Descripttion: 
+ * @version: 
+ * @Author: JW
+ * @Date: 2022-12-05 19:56:58
+ */
+/*
  * @Author: djw
  * @Description: 富文本编辑器
  */
@@ -17,7 +23,7 @@ function MyEditor() {
   // 模拟 ajax 请求，异步设置 html
   useEffect(() => {
     setTimeout(() => {
-      setHtml('<p>hello world</p>')
+      setHtml('')
     }, 1500)
   }, [])
 

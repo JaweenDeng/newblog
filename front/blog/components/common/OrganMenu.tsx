@@ -6,6 +6,8 @@ import React from 'react';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { FileAddOutlined } from '@ant-design/icons'
+import { Logo } from '@/components/common/Logo';
+import styles from './css/OrganMenu.module.scss';
 type MenuItem = Required<MenuProps>['items'][number];
 
 function getItem(
@@ -32,7 +34,8 @@ export const OrganMenu = () => {
     console.log('click ', e);
   };
   return (
-    <>
+    <div className={styles.OrganMenu}>
+      <Logo />
       <Menu
         onClick={onClick}
         style={{ width: 256 }}
@@ -41,6 +44,6 @@ export const OrganMenu = () => {
         mode="inline"
         items={items}
       />
-    </>
+    </div>
   )
 }

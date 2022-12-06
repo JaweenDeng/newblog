@@ -15,7 +15,9 @@ export const OrganLayout:React.FC<Iprops> = (props) => {
       <OrganMenu />
       <div className={styles.main}>
         <OrganHeader />
-        { props.children }
+        <div className={styles.content}>
+          { props.children }
+        </div>
       </div>
     </div>
   )

@@ -36,8 +36,8 @@ export default function articleId() {
       <Form
         form={form}
         name="basic"
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 20 }}
+        labelCol={{ span: 2 }}
+        wrapperCol={{ span: 22 }}
         initialValues={{ remember: true }}
         onFinish={onFinish}
         autoComplete="off"

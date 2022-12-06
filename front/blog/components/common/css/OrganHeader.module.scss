@@ -1,0 +1,9 @@
+.OrganHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 55px;
+  padding: 0 35px;
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 0 0 hsl(0deg 0% 100% / 50%);
+}
