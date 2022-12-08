@@ -4,6 +4,7 @@
  */
 import { Controller, Get, Post, UseGuards, Request, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UserService } from '../user/user.service';
+import { ArticleService } from './article.service'
 import { FileInterceptor,FilesInterceptor } from '@nestjs/platform-express';
 const fs  = require('fs');
 const path = require('path');
@@ -12,6 +13,7 @@ const path = require('path');
 export class ArticleController {
   constructor(
     private readonly userService: UserService,
+    private readonly articleService: ArticleService
     ) {}
   
   // 上传接口
@@ -27,12 +29,42 @@ export class ArticleController {
     };
   }
 
-  @Get('/post')
-  async addArticle(@Request() req, @Body() body) {
-    const userId = await this.userService.getToken(req)
-    console.log(userId)
-    return 'hello word111';
+  // 获取当前用户创建文章列表
+  @Get('list')
+  async getArticleList(@Request() req, @Body() body) {
+    const article = await this.articleService.getArticleList(req, body)
+    if (article) {
+      return {
+        code: 0,
+        message: 'Success.',
+        data:article
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+    
   }
+
+  // 文章保存
+  @Post('/save')
+  async saveArticle(@Request() req, @Body() body) {
+    const article = await this.articleService.saveArticle(req, body)
+    if (article) {
+      return {
+        code: 0,
+        message: 'Success.',
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
+
 
   //富文本编辑器上传图片
   @Post('/common/upload')

@@ -1,10 +1,4 @@
 /*
- * @Descripttion: 
- * @version: 
- * @Author: JW
- * @Date: 2022-12-05 19:56:58
- */
-/*
  * @Author: djw
  * @Description: 富文本编辑器
  */
@@ -13,12 +7,16 @@ import React, { useState, useEffect } from 'react'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
 import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
 import { postUrl } from '../../config/config'
-function MyEditor() {
+interface IProps {
+  html:string,
+  setHtml:Function
+}
+function MyEditor({ html, setHtml }:IProps) {
   // editor 实例
   const [editor, setEditor] = useState<IDomEditor | null>(null)   // TS 语法
 
   // 编辑器内容
-  const [html, setHtml] = useState('<p>hello</p>')
+  //const [html, setHtml] = useState('<p>hello</p>')
 
   // 模拟 ajax 请求，异步设置 html
   useEffect(() => {
@@ -34,7 +32,6 @@ function MyEditor() {
   const editorConfig: Partial<IEditorConfig> = {    // TS 语法
     placeholder: '请输入内容...',
     MENU_CONF: {}
-    
   }
   // 
   editorConfig.MENU_CONF = {

@@ -2,18 +2,26 @@
  * @Author: djw
  * @Description: 编辑文章
  */
-import { Form, Input, Select, Upload, Button, message } from 'antd'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
+import { Form, Input, Select, Upload, Button, message, InputNumber, Switch  } from 'antd'
+import type { UploadFile } from 'antd/es/upload/interface';
 import { OrganLayout } from '@/components/Layout/OrganLayout' 
 import { articleType } from '@/config/config'
-import dynamic from 'next/dynamic'
 import { upload } from '../../api/user'
-// import { staticUrl } from '../../../config/config'
+import { saveArticle } from '../../api/organizers'
+import { staticUrl } from '../../../config/config'
 const ReactWEditor = dynamic(import("@/components/common/Editor"), {
   ssr: false,
   loading: () => <p>Loading ...</p>, //异步加载组件前的loading状态
 });
 export default function articleId() {
+  const router = useRouter()
+  const id = router.query.id
   const [form] = Form.useForm()
+  const [html, setHtml] = useState('')
+  const [fileList, setFileList] = useState<UploadFile[]>([])
   // 图片封面上传
   const customRequest = async (e:any) => {
     const params = new FormData()
@@ -23,12 +31,36 @@ export default function articleId() {
       message.success('上传成功!')
       form.setFieldsValue({
         poster: res.data,
-      });
+      })
+      setFileList([
+        {
+          uid: '-1',
+          name: e.file.name,
+          status: 'done',
+          url: `${staticUrl}${res.data}`,
+        },
+      ])
     }
   }
+  // 移除上传封面
+  const handleRemove = () => {
+    setFileList([])
+    form.setFieldsValue({
+      poster: '',
+    })
+  }
   // 表单提交
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const onFinish = async (values: any) => {
+    const params = {
+      ...values, 
+      content:html, 
+      id:id ? +id : 0,
+      status:values.status ? 1 : 0
+    }
+    const res = await saveArticle(params)
+    if (res.code === 0) {
+      message.success('发布成功!')
+    }
   };
   return (
     <OrganLayout>
@@ -67,7 +99,6 @@ export default function articleId() {
                 <Select.Option value={+key} key={+key}>{articleType[key]}</Select.Option>
               ))
             }
-            
           </Select>
         </Form.Item>
         <Form.Item
@@ -75,15 +106,27 @@ export default function articleId() {
           name="poster"
           rules={[{ required: false, message: '请上传文章封面' }]}
         >
-          <Upload name="logo" customRequest={(e) => customRequest(e)} fileList={[]}>
+          <Upload name="logo" fileList={fileList} customRequest={(e) => customRequest(e)} onRemove={() => handleRemove()}>
             <Button>点击上传图片</Button>
           </Upload>
+        </Form.Item>
+        <Form.Item
+          label="排序"
+          name="sort"
+        >
+          <InputNumber />
+        </Form.Item>
+        <Form.Item
+          label="上下架"
+          name="status"
+        >
+          <Switch  />
         </Form.Item>
         <Form.Item
           label="文章详情"
           name="content"
         >
-          <ReactWEditor />
+          <ReactWEditor html={html} setHtml={setHtml} />
         </Form.Item>
         <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
           <Button type="primary" htmlType="submit">

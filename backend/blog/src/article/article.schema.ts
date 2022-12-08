@@ -13,7 +13,11 @@ export const articleSchema = new Schema({
   content: { type: String },
   sort: { type: Number },
   status: { type: Number },
+  createTime:{ type: Number },
   updateTime: { type: Number },
   read:{ type: Number },
   userId:{ type: String, required: true },
 });
+
+
+

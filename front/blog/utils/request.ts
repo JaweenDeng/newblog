@@ -70,7 +70,7 @@ export class Request {
     this.instance.interceptors.response.use((res:AxiosResponse) => {
       removePedding(config)
       console.log(res, 'res')
-      if (res.data.code === 0) {
+      if (res.data && res.data.code === 0) {
         return Promise.resolve(res.data)
       } else {
         if( res.data.message ) {
@@ -85,7 +85,7 @@ export class Request {
           message.warn(error.message)
         }
         
-        // return Promise.reject(error)
+        return Promise.reject(error)
       }
     })
   }
