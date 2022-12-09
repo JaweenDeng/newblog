@@ -2,10 +2,11 @@
  * @Author: djw
  * @Description: ArticleController
  */
-import { Controller, Get, Post, UseGuards, Request, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { UserService } from '../user/user.service';
-import { ArticleService } from './article.service'
+import { Controller, Get, Post, UseGuards, Request, Body, Query, Param, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor,FilesInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@nestjs/passport';
+import { UserService } from '../user/user.service';
+import { ArticleService } from './article.service';
 const fs  = require('fs');
 const path = require('path');
 
@@ -30,9 +31,10 @@ export class ArticleController {
   }
 
   // 获取当前用户创建文章列表
+  @UseGuards(AuthGuard('jwt'))
   @Get('list')
-  async getArticleList(@Request() req, @Body() body) {
-    const article = await this.articleService.getArticleList(req, body)
+  async getArticleList(@Request() req, @Query() query) {
+    const article = await this.articleService.getArticleList(req, query)
     if (article) {
       return {
         code: 0,
@@ -48,10 +50,11 @@ export class ArticleController {
     
   }
 
-  // 文章保存
-  @Post('/save')
+  // 文章新增
+  @UseGuards(AuthGuard('jwt'))
+  @Post('add')
   async saveArticle(@Request() req, @Body() body) {
-    const article = await this.articleService.saveArticle(req, body)
+    const article = await this.articleService.addArticle(req, body)
     if (article) {
       return {
         code: 0,
@@ -65,6 +68,60 @@ export class ArticleController {
     }
   }
 
+  // 获取单个文章详情
+  @UseGuards(AuthGuard('jwt'))
+  @Get('detail/:id')
+  async getDetail(@Param('id') id: string) {
+    const article = await this.articleService.getArticleDetail(id)
+    if (article && article.length) {
+      return {
+        code: 0,
+        message: 'Success.',
+        data:article[0]
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
+
+  // 文章编辑
+  @UseGuards(AuthGuard('jwt'))
+  @Post('edit/:id')
+  async editArticle(@Param('id') id: string, @Body() body) {
+    const article = await this.articleService.updateArticle(id, body)
+    if (article) {
+      return {
+        code: 0,
+        message: 'Success.',
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
+
+  // 文章删除
+  @UseGuards(AuthGuard('jwt'))
+  @Post('delete/:id')
+  async deleteArticle(@Param('id') id: string) {
+    const res = await this.articleService.deleteArticle(id)
+    if (res) {
+      return {
+        code: 0,
+        message: 'Success.',
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
 
   //富文本编辑器上传图片
   @Post('/common/upload')
@@ -81,4 +138,6 @@ export class ArticleController {
       }
     }
   }
+
+
 }

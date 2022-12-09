@@ -18,3 +18,8 @@ export interface article extends Document {
   readonly updateTime: number,
   readonly read: number,
 }
+
+export interface IList {
+  entry:article[],
+  total:number
+}

@@ -2,26 +2,60 @@
  * @Author: djw
  * @Description: 编辑文章
  */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import { Form, Input, Select, Upload, Button, message, InputNumber, Switch  } from 'antd'
+import Link from 'next/link'
 import type { UploadFile } from 'antd/es/upload/interface';
 import { OrganLayout } from '@/components/Layout/OrganLayout' 
 import { articleType } from '@/config/config'
 import { upload } from '../../api/user'
-import { saveArticle } from '../../api/organizers'
-import { staticUrl } from '../../../config/config'
+import { saveArticle, editArticle, getArticleDetail } from '../../api/organizers'
+import { postUrl } from '../../../config/config'
+
 const ReactWEditor = dynamic(import("@/components/common/Editor"), {
   ssr: false,
   loading: () => <p>Loading ...</p>, //异步加载组件前的loading状态
-});
+})
+
 export default function articleId() {
   const router = useRouter()
   const id = router.query.id
   const [form] = Form.useForm()
   const [html, setHtml] = useState('')
   const [fileList, setFileList] = useState<UploadFile[]>([])
+  useEffect(() =>{
+    getDetail()
+  },[id])
+
+  // 获取文章详情
+  const getDetail = async () => {
+    if(id && id != '0') {
+      const res:any = await getArticleDetail((id as string))
+      if (res && res.code === 0) {
+        console.log(res.data)
+        form.setFieldsValue({
+          ...(res.data as Object),
+          status:res.data.status === 1
+        })
+        if (res.data.poster) {
+          setFileList([
+            {
+              uid: '-1',
+              name: '封面图',
+              status: 'done',
+              url: `${postUrl}${res.data.poster}`,
+            },
+          ])
+        }
+        if (res.data.content) {
+          setHtml(res.data.content)
+        }
+      }
+    }
+  }
+
   // 图片封面上传
   const customRequest = async (e:any) => {
     const params = new FormData()
@@ -37,7 +71,7 @@ export default function articleId() {
           uid: '-1',
           name: e.file.name,
           status: 'done',
-          url: `${staticUrl}${res.data}`,
+          url: `${postUrl}${res.data}`,
         },
       ])
     }
@@ -54,12 +88,12 @@ export default function articleId() {
     const params = {
       ...values, 
       content:html, 
-      id:id ? +id : 0,
       status:values.status ? 1 : 0
     }
-    const res = await saveArticle(params)
+    const res = id && id != '0' ? await editArticle((id as string), params) : await saveArticle(params)
     if (res.code === 0) {
       message.success('发布成功!')
+      router.push('/organizers/article')
     }
   };
   return (
@@ -119,6 +153,7 @@ export default function articleId() {
         <Form.Item
           label="上下架"
           name="status"
+          valuePropName="checked"
         >
           <Switch  />
         </Form.Item>
@@ -131,6 +166,9 @@ export default function articleId() {
         <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
           <Button type="primary" htmlType="submit">
             提交
+          </Button>
+          <Button>
+            <Link href="/organizers/article">返回</Link>
           </Button>
         </Form.Item>
       </Form>

@@ -59,12 +59,13 @@ export class UserService {
   async login(body: LoginDTO): Promise<string|null> {
     const { phone, password } = body
     const user = await this.userModel.findOne({phone});
-    const isPassword = await bcrypt.compare(password, user.password)
-    if (user && isPassword ) {
-      return this.jwtService.sign({username: user.surname, sub: user.userId})
-    } else {
-      return null
-    }
+    if (user) {
+      const isPassword = await bcrypt.compare(password, user.password)
+      if (isPassword) {
+        return this.jwtService.sign({username: user.surname, sub: user.userId})
+      }
+    } 
+    return null
   }
   
   // 用户注册

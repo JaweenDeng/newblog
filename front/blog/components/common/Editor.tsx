@@ -20,9 +20,7 @@ function MyEditor({ html, setHtml }:IProps) {
 
   // 模拟 ajax 请求，异步设置 html
   useEffect(() => {
-    setTimeout(() => {
-      setHtml('')
-    }, 1500)
+    setHtml(html)
   }, [])
 
   // 工具栏配置

@@ -13,10 +13,6 @@ export const toLogin = (params:ILogin) => {
 export const toRegister = (params:ILogin) => {
   return Request.post(`/user/register`, params)
 }
-// 获取所有用户
-export const getUsers = () => {
-  return Request.get(`/article/post`)
-}
 
 // 上传接口
 export const upload = (params:any) => {
