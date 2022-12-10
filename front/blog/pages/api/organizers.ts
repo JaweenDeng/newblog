@@ -29,3 +29,8 @@ export const deleteArticle = (id:number) => {
 export const getArticleDetail = (id:string) => {
   return Request.get(`/article/detail/${id}`)
 }
+
+// 文章导入
+export const importArticle = (params:any) => {
+  return Request.post(`/article/import`, params)
+}

@@ -3,11 +3,11 @@
  * @Description: 文章管理
  */
 import { useEffect, useState } from 'react'
-import { Table, Image, Button, message, Modal } from 'antd'
+import { Table, Image, Button, message, Modal, Upload } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
 import { OrganLayout } from '@/components/Layout/OrganLayout' 
-import { getArticle, deleteArticle } from '../../api/organizers'
+import { getArticle, deleteArticle, importArticle } from '../../api/organizers'
 import { articleType, postUrl } from '@/config/config'
 import { changeTime } from '@/utils/utils'
 interface DataType {
@@ -17,7 +17,7 @@ interface DataType {
 }
 
 export default function Article () {
-  let current = 1
+  const [current, setCurrent] = useState(1)
   const [total, setTotal] = useState(0)
   const columns: ColumnsType<DataType> = [
     {
@@ -88,6 +88,17 @@ export default function Article () {
     },
   ]
   const [data, setData] = useState([])
+  // 导入
+  const customRequest = async (e:any) => {
+    const params = new FormData()
+    params.append('file', e.file)
+    const res = await importArticle(params)
+    if (res.code == 0) {
+      message.success('导入成功!')
+      setCurrent(1)
+      getListHandle()
+    }
+  }
   const getListHandle = async () => {
     const res:any = await getArticle({page:current})
     if (res && res.code === 0) {
@@ -97,7 +108,7 @@ export default function Article () {
   }
   // 分页
   const handleChange = (pagination:any) => {
-    current = pagination.current
+    setCurrent(pagination.current)
     getListHandle()
   }
   // 删除
@@ -122,6 +133,9 @@ export default function Article () {
       <Button type="primary">
         <Link href={`/organizers/article/0`}>新建文章</Link>
       </Button>
+      <Upload name="logo" fileList={[]} customRequest={(e) => customRequest(e)}>
+        <Button>导入</Button>
+      </Upload>
       <Table columns={columns} dataSource={data} rowKey={'id'} pagination={{total}} onChange={ handleChange } />
       </>
     </OrganLayout>

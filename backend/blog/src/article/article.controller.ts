@@ -16,7 +16,24 @@ export class ArticleController {
     private readonly userService: UserService,
     private readonly articleService: ArticleService
     ) {}
-  
+  // 导入
+  @Post('import')
+  @UseInterceptors(FileInterceptor('file'))
+  async import(@UploadedFile() file,@Body() body) {
+    const nowTime = Number(new Date().getTime())
+    const arr = file.originalname.split('.')
+    const fileType = arr[arr.length-1]
+    const url = path.join(__dirname, '..',  '../public/upload', `${nowTime}.${fileType}`)
+    const writeImage = fs.createWriteStream(path.join(__dirname, '..',  '../public/upload', `${nowTime}.${fileType}`))
+    writeImage.write(file.buffer)  
+    const data = fs.readFileSync(url)
+    return {
+      code: 0,
+      message: 'Success.',
+      data:`/static/upload/${file.originalname}`
+    };
+  }
+
   // 上传接口
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
