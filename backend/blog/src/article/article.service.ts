@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserService } from '../user/user.service';
 import { CreateArticleDTO, ListArticleDTO } from './article.dto';
-import { article, IList } from './article.interface';
-
+import { article, IList, IBeforeCreate } from './article.interface';
+import * as ExcelJS from 'exceljs';
 @Injectable()
 export class ArticleService {
   constructor(
@@ -22,12 +22,7 @@ export class ArticleService {
 
   // 新增文章
   async addArticle(@Request() req, body: CreateArticleDTO): Promise<boolean> {
-    const userId = await this.userService.getToken(req)
-    let nowTime = Number(new Date().getTime())/1000
-    nowTime = Math.round(nowTime)
-    const articles = await this.articleModel.find()
-    console.log(body.status)
-    const id = articles.length ? ((+articles[articles.length-1]['id'])+1) : 1 
+    const { userId, nowTime, id } = await this.beforeCreate(req, true)
     let params= {
       ...body,
       read:0,
@@ -59,4 +54,49 @@ export class ArticleService {
     return articles ? true : false
   }
   
+  // excel导入数据
+  async importExcel(@Request() req, buffer:any):Promise<boolean>{
+    const { userId, nowTime, id } = await this.beforeCreate(req, true)
+    const workbook = new ExcelJS.Workbook()
+    await workbook.xlsx.load(buffer) // 加载buffer文件
+    const worksheet = workbook.getWorksheet(1); // 获取excel表格的第一个sheet
+    const result = [];
+    const arr = []
+    worksheet.eachRow((row, rowNumber) => {
+      // 第一行是表头，故从第二行获取数据
+      if (rowNumber > 1) {
+        const target = {
+          userId,
+          read:0,
+          sort:0,
+          createTime:nowTime, 
+          updateTime:nowTime,
+          id:id + rowNumber
+        }
+        row.eachCell((cell, colNumber) => {
+          arr[colNumber] && (target[arr[colNumber-1]] = cell.value)
+        });
+        result.push(target);
+      } else {
+        row.eachCell((cell, colNumber) => {
+          arr.push(cell.value)
+        });
+      }
+    })
+    const article = await this.articleModel.insertMany(result)
+    return article ? true : false
+  }
+
+  // 新建文章前操作
+  async beforeCreate(@Request() req, isCreate:boolean):Promise<IBeforeCreate> {
+    const userId = await this.userService.getToken(req)
+    let nowTime = Number(new Date().getTime())/1000
+    nowTime = Math.round(nowTime)
+    let id = 0
+    if (isCreate) {
+      const articles = await this.articleModel.find()
+      id = articles.length ? ((+articles[articles.length-1]['id'])+1) : 1 
+    }
+    return { userId, nowTime, id } 
+  }
 }

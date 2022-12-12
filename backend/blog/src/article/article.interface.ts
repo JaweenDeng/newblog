@@ -19,7 +19,15 @@ export interface article extends Document {
   readonly read: number,
 }
 
+// 列表数组返回
 export interface IList {
   entry:article[],
   total:number
+}
+
+// 当前时间+文章id+userId ,用于插入数据
+export interface IBeforeCreate {
+  userId:string, 
+  nowTime:number, 
+  id?:number
 }

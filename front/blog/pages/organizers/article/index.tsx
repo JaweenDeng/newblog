@@ -95,8 +95,11 @@ export default function Article () {
     const res = await importArticle(params)
     if (res.code == 0) {
       message.success('导入成功!')
-      setCurrent(1)
-      getListHandle()
+      if (current > 1) {
+        setCurrent(1)
+      } else {
+        getListHandle()
+      }
     }
   }
   const getListHandle = async () => {
@@ -109,7 +112,6 @@ export default function Article () {
   // 分页
   const handleChange = (pagination:any) => {
     setCurrent(pagination.current)
-    getListHandle()
   }
   // 删除
   const handleDelete = (id:number) => {
@@ -126,7 +128,7 @@ export default function Article () {
   }
   useEffect(() => {
     getListHandle()
-  }, [])
+  }, [current])
   return (
     <OrganLayout>
       <>
@@ -136,7 +138,7 @@ export default function Article () {
       <Upload name="logo" fileList={[]} customRequest={(e) => customRequest(e)}>
         <Button>导入</Button>
       </Upload>
-      <Table columns={columns} dataSource={data} rowKey={'id'} pagination={{total}} onChange={ handleChange } />
+      <Table columns={columns} dataSource={data} rowKey={'id'} pagination={{total, showTotal:(total) => `共${total}条`}} onChange={ handleChange } />
       </>
     </OrganLayout>
   )

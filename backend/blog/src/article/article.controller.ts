@@ -19,19 +19,19 @@ export class ArticleController {
   // 导入
   @Post('import')
   @UseInterceptors(FileInterceptor('file'))
-  async import(@UploadedFile() file,@Body() body) {
-    const nowTime = Number(new Date().getTime())
-    const arr = file.originalname.split('.')
-    const fileType = arr[arr.length-1]
-    const url = path.join(__dirname, '..',  '../public/upload', `${nowTime}.${fileType}`)
-    const writeImage = fs.createWriteStream(path.join(__dirname, '..',  '../public/upload', `${nowTime}.${fileType}`))
-    writeImage.write(file.buffer)  
-    const data = fs.readFileSync(url)
-    return {
-      code: 0,
-      message: 'Success.',
-      data:`/static/upload/${file.originalname}`
-    };
+  async import(@Request() req, @UploadedFile() file) {
+    const article = await this.articleService.importExcel(req, file.buffer)
+    if (article) {
+      return {
+        code: 0,
+        message: 'Success.',
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
   }
 
   // 上传接口
