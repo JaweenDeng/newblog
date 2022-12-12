@@ -14,7 +14,9 @@ export const HomeLayout:React.FC<Iprops> = (props) => {
     <div className={styles.layout}>
       <Header />
       <Login />
-      {props.children}
+      <div className={styles.main}>
+        {props.children}
+      </div>
     </div>
   )
 }

@@ -1,7 +1,14 @@
 /*
+ * @Descripttion: 
+ * @version: 
+ * @Author: JW
+ * @Date: 2022-12-05 19:56:58
+ */
+/*
  * @Author: djw
  * @Description: 头部组件
  */
+import Link from 'next/link';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
@@ -31,11 +38,11 @@ export const Header = () => {
   ]
   return (
     <header className={styles.header}>
-      <div className={styles.logo}>
-        DENG
-      </div>
+      <Link href="/" className={styles.logo}>
+        <span className={styles.txt}>DENG BLOG</span>
+      </Link>
       <Menu mode="horizontal" items={items} />
-      <button>
+      <button className={styles.userInfo}>
         <UserOutlined />
       </button>
     </header>

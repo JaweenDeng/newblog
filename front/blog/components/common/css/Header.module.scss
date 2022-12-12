@@ -1,9 +1,31 @@
 .header {
+  position: fixed;
+  top:0px;
+  left: 0px;
+  right: 0px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  padding-right: 20px;
+  z-index:1000;
+  background: #fff;
   .logo {
-    font-size: 14px;
+    position: relative;
+    width: 330px;
+    height: 45px;
+    font-size: 30px;
+    background: linear-gradient(45deg, #000 0, #000 50%, #fff 50%);
+    .txt {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      mix-blend-mode: difference;
+      // animation: move 3s infinite linear alternate;
+    }
+  }
+  .userInfo {
+    margin-left: auto;
   }
   :global {
     .ant-menu-horizontal {
@@ -18,5 +40,15 @@
       width: 100%;
       left: 0px;
     }
+  }
+}
+
+// logo动画
+@keyframes move {
+  0% {
+      transform: translate(-30%, -50%);
+  }
+  100% {
+      transform: translate(-70%, -50%);
   }
 }
