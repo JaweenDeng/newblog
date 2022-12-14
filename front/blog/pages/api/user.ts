@@ -18,3 +18,8 @@ export const toRegister = (params:ILogin) => {
 export const upload = (params:any) => {
   return Request.post(`/article/upload`, params)
 }
+
+// 获取用户信息
+export const getUserInfo = () => {
+  return Request.post(`/user/getUserInfo`)
+}

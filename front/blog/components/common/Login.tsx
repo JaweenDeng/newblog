@@ -5,7 +5,7 @@
 import { Modal, Button, Form, Input, Col, Row, message } from 'antd'
 import { useState } from 'react'
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
-import { changeShowLogin } from '../../store/common'
+import { changeShowLogin, setUserInfo } from '../../store/common'
 import { toLogin, toRegister } from '../../pages/api/user'
 
 type IType = 'login' | 'forgetPsd' | 'register'
@@ -50,6 +50,7 @@ export const Login = () => {
       if (res.code === 0 && res.data) {
         message.success('登录成功!')
         localStorage.setItem('token', (res.data as string))
+        dispatch(setUserInfo())
         handleSuccess()
       }
     } else if (formType === 'register') {

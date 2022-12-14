@@ -11,3 +11,8 @@ export interface User extends Document {
   readonly phone: string;
   readonly userId: string
 }
+
+export interface IPayload {
+  userId?:string,
+  username?:string
+}

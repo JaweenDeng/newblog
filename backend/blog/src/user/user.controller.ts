@@ -40,6 +40,7 @@ export class UserController {
       message: 'Success.'
     };
   }
+
   // GET /findUser/userId
   @Get('/findUser/:userId')
   async findUser(@Param('userId') userId:string):Promise<UserResponse<User>> {
@@ -116,6 +117,17 @@ export class UserController {
         code: 1,
         message: '注册失败!'
       }
+    }
+  }
+
+  //auth 判断是否登录
+  @Post('getUserInfo')
+  async getUserInfo(@Request() req) {
+    const user = await this.userService.getUserInfo(req);
+    return {
+      code: 0,
+      message: 'Success',
+      data:user
     }
   }
 }

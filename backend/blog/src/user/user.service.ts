@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDTO, EditUserDTO, LoginDTO, RegisterDTO } from './user.dto';
-import { User } from './user.interface';
+import { User, IPayload } from './user.interface';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -83,4 +83,15 @@ export class UserService {
     return payload.sub
   }
   
+  // 返回登录信息
+  async getUserInfo(@Request() req):Promise<User|null> {
+    if (req.get('Authorization')) {
+      const userId = await this.getToken(req)
+      if (userId) {
+        const user = await this.findUser(userId)
+        return user.length ? user[0] : null
+      }
+    } 
+    return null
+  }
 }
