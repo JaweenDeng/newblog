@@ -18,8 +18,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <Button type="primary" onClick={() => dispatch(changeShowLogin())}>去登陆</Button>
-        <div className={styles.txt}>blog</div>
+        <div className={styles.content}>
+          <Button type="primary" onClick={() => dispatch(changeShowLogin())}>去登陆</Button>
+          <div className={styles.txt}>blog</div>
+        </div>
       </div>
     </HomeLayout>
   )

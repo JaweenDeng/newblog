@@ -2,14 +2,15 @@
  * @Author: djw
  * @Description: 头部组件
  */
-import { useEffect } from 'react';
-import Link from 'next/link';
-import { Menu } from 'antd';
-import type { MenuProps } from 'antd';
+import { useEffect } from 'react'
+import Link from 'next/link'
+import { Menu } from 'antd'
+import type { MenuProps } from 'antd'
 import styles from './css/Header.module.scss';
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { changeShowLogin, Logout } from '@/store/common'
 import { store } from '@/store'
+import { UserInfo } from '@/components/common/UserInfo'
 export const Header = () => {
   const items:MenuProps['items'] = [
     {
@@ -33,25 +34,15 @@ export const Header = () => {
       key:'comment'
     }
   ]
-  const dispatch = useAppDispatch()
-  const userInfo = useAppSelector(state => state.common.userInfo)
   return (
     <header className={styles.header}>
       <Link href="/" className={styles.logo}>
         <span className={styles.txt}>DENG BLOG</span>
       </Link>
       <Menu mode="horizontal" items={items} />
-      {
-        userInfo?.surname ? 
-        <div className={styles.userInfo} onClick={() => dispatch(Logout())}>
-          {`欢迎，${userInfo?.surname}` }
-        </div>
-        : <div className={styles.userInfo} onClick={() => dispatch(changeShowLogin())}>
-          登录
-        </div>
-      }
-
-      
+      <div className={styles.userInfo}>
+        <UserInfo />
+      </div>
     </header>
   )
 }
