@@ -18,21 +18,29 @@ export const Header = () => {
       key: 'index'
     },
     {
+      label: '笔记',
+      key: 'note'
+    },
+    {
+      label: '热评',
+      key: 'hotReply'
+    },
+    {
+      label: '笑话',
+      key: 'joke'
+    },
+    {
       label: '生活',
       key: 'life'
     },
     {
-      label: '归档',
-      key: 'arrange'
-    },
-    {
-      label: '关于',
-      key: 'about'
-    },
-    {
       label:'留言',
       key:'comment'
-    }
+    },
+    {
+      label:'关于我',
+      key:'about'
+    },
   ]
   return (
     <header className={styles.header}>
