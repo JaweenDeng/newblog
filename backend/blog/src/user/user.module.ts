@@ -12,7 +12,7 @@ import config from '../config/common.config'
     MongooseModule.forFeature([{ name: 'Users', schema: userSchema }]),
     JwtModule.register({
       secret: config.JwtSecret,
-      signOptions: { expiresIn: '86400s' },
+      // signOptions: { expiresIn: '86400s' },
     }),
     // 引入并配置PassportModule
     PassportModule.register({ defaultStrategy: 'jwt' })

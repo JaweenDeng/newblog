@@ -8,7 +8,8 @@ import qs from 'qs'
 import { message } from 'antd'
 import { IResult } from '../types/users'
 import { postUrl } from '../config/config'
-
+import { Logout } from '@/store/common'
+import { store } from '../store/index'
 
 const pedding = new Map()
 const addPedding = (config:AxiosRequestConfig) => {
@@ -52,7 +53,10 @@ export class Request {
     this.instance.interceptors.request.use((config:AxiosRequestConfig) =>{
       removePedding(config)
       addPedding(config)
-      const token = localStorage.getItem('token')
+      let token:string | null = ''
+      if (typeof window !== "undefined") {
+        token = localStorage.getItem('token')
+      }
       if (token) {
         config = {
           ...config,
@@ -79,12 +83,15 @@ export class Request {
         return Promise.resolve(res) 
       }
     }, (error:any) =>{
-      console.log(error, 'error')
+      // console.log(error, 'error')
       if(!error.toString().includes('CanceledError')) {
         if (error && error.message) {
           message.warn(error.message)
         }
-        
+        // 无权限
+        if (error.request && error.request.status === 401) {
+          store.dispatch(Logout())
+        }
         return Promise.reject(error)
       }
     })

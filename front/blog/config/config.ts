@@ -10,5 +10,6 @@ export const staticUrl = `${postUrl}/static`
 export const articleType = {
   '1':'生活',
   '2':'技术',
-  '3':'段子'
+  '3':'段子',
+  '4':'热评'
 }

@@ -5,12 +5,17 @@
  * @Date: 2022-12-24 15:24:11
  */
 import { HomeLayout } from '@/components/Layout/HomeLayout'
-import { Col, Row, Pagination  } from 'antd'
+import { Col, Row, Pagination } from 'antd'
 import Link from 'next/link'
 import Image from 'next/image'
 import styles from './css/hotReply.module.scss'
 import logoImg from '@/public/assets/logo.jpg'
-export default function hotReply() {
+import { getHotPely } from '@/pages/api/home'
+import { useState } from 'react'
+
+export default function hotReply(props:any) {
+  const [data, setData] = useState(props.data.entry)
+  const [total, setTotal] = useState(props.data.total)
   return (
     <HomeLayout>
       <div className={styles.container}>
@@ -28,11 +33,11 @@ export default function hotReply() {
               <h4 className={styles.smallTitle}>全部热评</h4>
               <div className={styles.list}>
                 {
-                  [1, 2, 3, 4, 5].map((item) =>{
+                  data.map((item:any, index:number) =>{
                     return (
-                      <Link href="/" className={styles.listItem}>
-                        <h5>It's always darkest just before the dawn. 至暗总在黎明前。It's always darkest just before the dawn. 至暗总在黎明前。It's always darkest just before the dawn. 至暗总在黎明前。It's always darkest just before the dawn. 至暗总在黎明前。It's always darkest just before the dawn. 至暗总在黎明前。</h5>
-                        <p>-程佳佳《山楂树之恋》</p>
+                      <Link href="/" className={styles.listItem} key={index}>
+                        <h5 dangerouslySetInnerHTML={{ __html: item.content }}></h5>
+                        <p>- {item.title}</p>
                       </Link>
                     )
                   })
@@ -40,21 +45,39 @@ export default function hotReply() {
               </div>
               <Pagination
                 style={{'textAlign':'center'}}
-                total={50}
-                disabled
-                showSizeChanger
-                showQuickJumper
+                total={total}
+                showSizeChanger={false}
+                itemRender={
+                  (page, type) => type === 'page' && <Link href={`/hotReply?page=${page}`}>{page}</Link> 
+                                  
+                }
               />
             </Col>
             <Col span={7} offset={1}>
               <h4 className={styles.smallTitle}>热门推荐</h4>
-              <Image src={logoImg} alt="" width={353} height={180} />
-              <Image src={logoImg} alt="" width={353} height={180} />
-              <Image src={logoImg} alt="" width={353} height={180} />
+              <Link href="/" className={styles.topItem}>
+                <Image src={logoImg} alt="" width={353} height={180} />
+              </Link>
+              <Link href="/" className={styles.topItem}>
+                <Image src={logoImg} alt="" width={353} height={180} />
+              </Link>
+              <Link href="/" className={styles.topItem}>
+                <Image src={logoImg} alt="" width={353} height={180} />
+              </Link>
             </Col>
           </Row>
         </div>
       </div>
     </HomeLayout>
   )
+}
+
+export async function getServerSideProps(context:any){
+  const page = context.query && context.query.page ? context.query.page : 1
+  const res = await getHotPely({page})
+  return {
+    props: {
+      data:res.data
+    },
+  }
 }

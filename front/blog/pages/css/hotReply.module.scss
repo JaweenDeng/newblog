@@ -67,7 +67,12 @@
     color:#333;
     padding-top: 20px;
     min-height: 90px;
-    border-bottom: 1px solid #eee;;
+    border-bottom: 1px solid #eee;
+    &:hover {
+      h5, p {
+        color:skyblue;
+      }
+    }
     h5 {
       font-size: 16px;
     }
@@ -86,4 +91,9 @@
   margin: 0 0 20px;
   font-size: 16px;
   line-height: 25px;
+}
+
+.topItem {
+  display: block;
+  margin-bottom: 10px;
 }
