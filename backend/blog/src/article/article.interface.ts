@@ -31,3 +31,14 @@ export interface IBeforeCreate {
   nowTime:number, 
   id?:number
 }
+
+export interface comment extends Document {
+  readonly id: String,
+  readonly content: String,
+  readonly status: Number,
+  readonly parentId:String,
+  readonly createTime:Number,
+  readonly replyUserName:String,
+  readonly articleId:String,
+  readonly userName:String
+}

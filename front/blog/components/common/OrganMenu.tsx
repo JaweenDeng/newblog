@@ -2,12 +2,13 @@
  * @Author: djw
  * @Description: 管理后台侧边栏
  */
-import React from 'react';
+import React, { useState } from 'react';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
-import { FileAddOutlined } from '@ant-design/icons'
+import { FileAddOutlined, CommentOutlined } from '@ant-design/icons'
 import { Logo } from '@/components/common/Logo';
 import styles from './css/OrganMenu.module.scss';
+import Router, { useRouter } from 'next/router'
 type MenuItem = Required<MenuProps>['items'][number];
 
 function getItem(
@@ -27,11 +28,16 @@ function getItem(
 }
 
 export const OrganMenu = () => {
+  const router = useRouter()
+  const [current, setCurrent] = useState(router.pathname)
   const items: MenuProps['items'] = [
-    getItem('文章管理', 'article', <FileAddOutlined />)
+    getItem('文章管理', '/organizers/article', <FileAddOutlined />),
+    getItem('评论管理', '/organizers/comment', <CommentOutlined />)
   ]
   const onClick: MenuProps['onClick'] = e => {
-    console.log('click ', e);
+    Router.push({
+      pathname:e.key
+    })
   };
   return (
     <div className={styles.OrganMenu}>
@@ -39,7 +45,7 @@ export const OrganMenu = () => {
       <Menu
         onClick={onClick}
         style={{ width: 256 }}
-        defaultSelectedKeys={['1']}
+        defaultSelectedKeys={[current]}
         defaultOpenKeys={['sub1']}
         mode="inline"
         items={items}

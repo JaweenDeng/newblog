@@ -73,7 +73,6 @@ export class Request {
     // 响应拦截器
     this.instance.interceptors.response.use((res:AxiosResponse) => {
       removePedding(config)
-      console.log(res, 'res')
       if (res.data && res.data.code === 0) {
         return Promise.resolve(res.data)
       } else {

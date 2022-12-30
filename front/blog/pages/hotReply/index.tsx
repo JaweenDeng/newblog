@@ -35,7 +35,7 @@ export default function hotReply(props:any) {
                 {
                   data.map((item:any, index:number) =>{
                     return (
-                      <Link href="/" className={styles.listItem} key={index}>
+                      <Link href={`/hotReply/${item.id}`} className={styles.listItem} key={index}>
                         <h5 dangerouslySetInnerHTML={{ __html: item.content }}></h5>
                         <p>- {item.title}</p>
                       </Link>

@@ -34,3 +34,13 @@ export const getArticleDetail = (id:string) => {
 export const importArticle = (params:any) => {
   return Request.post(`/article/import`, params)
 }
+
+// 评论列表 deleteComment
+export const getCommentList = (params?:any) => {
+  return Request.get(`/article/CommentList?${qs.stringify(params)}`)
+}
+
+// 评论删除
+export const deleteComment = (id:number) => {
+  return Request.post(`/article/deleteComment/${id}`)
+}

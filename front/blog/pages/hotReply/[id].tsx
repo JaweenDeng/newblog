@@ -3,17 +3,92 @@
  * @Description: 热评详情页
  */
 import { HomeLayout } from '@/components/Layout/HomeLayout'
-import { Col, Row, Pagination } from 'antd'
+import { Col, Row, Pagination, Empty, Input, Button, message, Modal } from 'antd'
 import Link from 'next/link'
 import Image from 'next/image'
 import styles from '../css/hotReply.module.scss'
 import logoImg from '@/public/assets/logo.jpg'
-import { getHotPely } from '@/pages/api/home'
-import { useState } from 'react'
-
+import { getHotPelyDetail, getFirstComment, setFirstCommnet, setSecordComment, getSecordComment } from '@/pages/api/home'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useAppSelector } from '@/store/hooks'
+import { changeTime } from '@/utils/utils'
+const { TextArea } = Input
 export default function hotReply(props:any) {
-  const [data, setData] = useState(props.data.entry)
-  const [total, setTotal] = useState(props.data.total)
+  const router = useRouter()
+  const userInfo = useAppSelector(state => state.common.userInfo)
+  const [data, setData] = useState(props.data)
+  const [comment, setComment] = useState<any>([])
+  const [inputVal, setInputVal] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [inputValue, setInputValue] = useState('')
+  const [curItem, setCurItem] = useState({})
+  const getComment = async () => {
+    const res:any = await getFirstComment({id:router.query.id})
+    if (res && res.code === 0) {
+      setComment(res.data)
+    }
+  }
+  const handleSubmit = async () => {
+    if (!userInfo.surname) {
+      message.info('请先登录')
+      return 
+    }
+    if (!inputVal) {
+      message.info('请输入评论内容')
+      return 
+    }
+    const res =  await setFirstCommnet({articleId:router.query.id, content:inputVal})
+    if (res.code === 0) {
+      message.success('发表成功!')
+      getComment()
+      setInputVal('')
+    }
+  }
+  const handleOpen = (row:any) => {
+    if (!userInfo.surname) {
+      message.info('请先登录')
+      return 
+    }
+    setInputValue('')
+    setCurItem(row)
+    setIsModalOpen(true)
+  }
+  const handleOk = async () => {
+    if (!inputValue) {
+      message.info('请输入评论内容')
+      return 
+    }
+    const res =  await setSecordComment({articleId:router.query.id, content:inputValue, parentId:curItem.id, replyUserName:curItem.userName})
+    if (res.code === 0) {
+      message.success('发表成功!')
+      getComment()
+      setIsModalOpen(false)
+    }
+  }
+  const showMore = async (row:any, index:number) => {
+    let newComment = [
+      ...comment
+    ]
+    if (comment[index] && comment[index]['more'] && comment[index]['more']['length']) {
+      newComment[index] = {
+        ...row,
+        more:[]
+      }
+    } else {
+      const res = await getSecordComment({articleId:router.query.id, parentId:row.id})
+      if (res.code === 0) {
+        newComment[index] = {
+          ...row,
+          more:res.data
+        }
+      }
+    }
+    setComment(newComment)
+  }
+  useEffect(() => {
+    getComment()
+  }, [])
   return (
     <HomeLayout>
       <div className={styles.container}>
@@ -28,28 +103,49 @@ export default function hotReply(props:any) {
         <div className={styles.content}>
           <Row>
             <Col span={16} className={styles.listWrap}>
-              <h4 className={styles.smallTitle}>全部热评</h4>
+              <h4 className={styles.smallTitle}>热评详情</h4>
               <div className={styles.list}>
-                {
-                  data.map((item:any, index:number) =>{
-                    return (
-                      <Link href="/" className={styles.listItem} key={index}>
-                        <h5 dangerouslySetInnerHTML={{ __html: item.content }}></h5>
-                        <p>- {item.title}</p>
-                      </Link>
-                    )
-                  })
-                }
+                <h2 dangerouslySetInnerHTML={{ __html: data.content }}></h2>
+                <p className={styles.textRight}>- {data.title}</p>
               </div>
-              <Pagination
-                style={{'textAlign':'center'}}
-                total={total}
-                showSizeChanger={false}
-                itemRender={
-                  (page, type) => type === 'page' && <Link href={`/hotReply?page=${page}`}>{page}</Link> 
-                                  
+              <div className={styles.comment}>
+                <h3>全部评论</h3>
+                {
+                  comment.length > 0 ? comment.map((item:any, index:number) => {
+                    return <div className={styles.commentList} key={item.id}>
+                      <h6>{item.userName}:</h6>
+                      <p>{item.content}</p>
+                      <div className={styles.wrap}>
+                        <div>{changeTime(item.createTime)}</div>
+                        <div className={styles.reply} onClick={() => handleOpen(item)}>回复</div>
+                      </div>
+                      { item.replies && item.replies > 0 && <div className={styles.lookeMore} onClick={() => showMore(item, index)}>点击查看更多评论({item.replies})</div>}
+                      { item.more && item.more.length > 0 && <div className={styles.smallWrap}>
+                          {
+                            item.more.map((pItem:any) => {
+                              return (
+                                <div key={pItem.id} className={styles.smallItem}>
+                                  <h6>{pItem.userName}:{pItem.replyUserName}</h6>
+                                  <p>{pItem.content}</p>
+                                  <div className={styles.wrap}>
+                                    <div>{changeTime(pItem.createTime)}</div>
+                                    <div className={styles.reply} onClick={() => handleOpen({id:item.id, userName:pItem.userName})}>回复</div>
+                                  </div>
+                                </div>
+                              )
+                            })
+                          }
+                        </div>}
+                    </div>
+                  }) : <Empty description={'暂无评论'} />
                 }
-              />
+                <TextArea rows={4} value={inputVal} className={styles.mt20} placeholder={'发布您对该文章的看法'} onChange={(e) => {setInputVal(e.target.value)}} />
+                <div className={`${styles.textRight} ${styles.mt20}`}>
+                  <Button type="primary" onClick={handleSubmit}>
+                    发布
+                  </Button>
+                </div>
+              </div>
             </Col>
             <Col span={7} offset={1}>
               <h4 className={styles.smallTitle}>热门推荐</h4>
@@ -65,14 +161,22 @@ export default function hotReply(props:any) {
             </Col>
           </Row>
         </div>
+        <Modal title="发表评论" open={isModalOpen} footer={null} onOk={handleOk} onCancel={() => {setIsModalOpen(false)}}>
+          { isModalOpen && <TextArea rows={4} value={inputValue} className={styles.mt20} placeholder={'发布您对该文章的看法'} onChange={(e) => {setInputValue(e.target.value)}} /> }
+          <div className={`${styles.textRight} ${styles.mt20}`}>
+            <Button type="primary" onClick={handleOk}>
+              发布
+            </Button>
+          </div>
+        </Modal>
       </div>
     </HomeLayout>
   )
 }
 
 export async function getServerSideProps(context:any){
-  const page = context.query && context.query.page ? context.query.page : 1
-  const res = await getHotPely({page})
+  const id = context.params && context.params.id ? context.params.id : 1
+  const res = await getHotPelyDetail({id})
   return {
     props: {
       data:res.data

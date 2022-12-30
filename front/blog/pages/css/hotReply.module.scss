@@ -97,3 +97,49 @@
   display: block;
   margin-bottom: 10px;
 }
+
+.textRight {
+  text-align: right;
+}
+
+.comment {
+  padding: 0 30px;
+}
+
+.mt20 {
+  margin-top: 20px;
+}
+
+.commentList {
+  padding:10px 0;
+  border-bottom: 1px solid #ddd;
+  h6 {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  p {
+    color:#666;
+    font-size: 12px;
+  }
+  .wrap {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    .reply {
+      cursor: pointer;
+    }
+  }
+  .lookeMore {
+    font-size: 12px;
+    cursor: pointer;
+    color: skyblue;
+  }
+  .smallWrap {
+    background: #f6f6f6;
+    padding: 0 20px 10px;
+    .smallItem {
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+    }
+  }
+}

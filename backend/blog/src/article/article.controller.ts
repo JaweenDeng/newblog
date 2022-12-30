@@ -156,5 +156,41 @@ export class ArticleController {
     }
   }
 
+  // 获取当前用户创建文章列表
+  @UseGuards(AuthGuard('jwt'))
+  @Get('CommentList')
+  async getCommentList(@Request() req, @Query() query) {
+    const article = await this.articleService.getCommentList(req, query)
+    if (article) {
+      return {
+        code: 0,
+        message: 'Success.',
+        data:article
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
+
+  // 评论删除
+  @UseGuards(AuthGuard('jwt'))
+  @Post('deleteComment/:id')
+  async deleteComment(@Param('id') id: string) {
+    const res = await this.articleService.deleteComment(id)
+    if (res) {
+      return {
+        code: 0,
+        message: 'Success.',
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
 
 }

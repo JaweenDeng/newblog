@@ -20,3 +20,10 @@ export class ListArticleDTO {
   readonly page:number;
   readonly pageSize?:number
 }
+
+// 新建文件评论
+export class CreateCommentDTO {
+  readonly content: String
+  readonly parentId?:String
+  readonly articleId:String
+}

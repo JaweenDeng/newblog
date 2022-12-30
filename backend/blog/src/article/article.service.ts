@@ -3,13 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserService } from '../user/user.service';
 import { CreateArticleDTO, ListArticleDTO } from './article.dto';
-import { article, IList, IBeforeCreate } from './article.interface';
+import { article, IList, IBeforeCreate, comment } from './article.interface';
 import * as ExcelJS from 'exceljs';
 @Injectable()
 export class ArticleService {
   constructor(
     private readonly userService: UserService,
-    @InjectModel('article') private readonly articleModel: Model<article>
+    @InjectModel('article') private readonly articleModel: Model<article>,
+    @InjectModel('comment') private readonly commentModel: Model<comment>,
   ){}
 
   // 文章列表列表
@@ -98,5 +99,18 @@ export class ArticleService {
       id = articles.length ? ((+articles[articles.length-1]['id'])+1) : 1 
     }
     return { userId, nowTime, id } 
+  }
+
+  // 评论列表
+  async getCommentList (@Request() req, body: ListArticleDTO) {
+    const total = await this.commentModel.find().count()
+    const articles = await this.commentModel.find().skip(10*((body.page-1))).limit(body.pageSize || 10)
+    return { entry:articles, total}
+  }
+
+  // 删除评论
+  async deleteComment(id: string): Promise<boolean> {
+    const articles = await this.commentModel.deleteOne({id})
+    return articles ? true : false
   }
 }

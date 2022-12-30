@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
 import { HomeService } from './home.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { articleSchema } from '../article/article.schema';
+import { articleSchema, commentSchema } from '../article/article.schema';
 import { HomeController } from './home.controller';
+import { UserModule } from '../user/user.module';
 @Module({
   imports:[
     MongooseModule.forFeature([{ name: 'article', schema: articleSchema }]),
+    MongooseModule.forFeature([{ name: 'comment', schema: commentSchema }]),
+    UserModule
   ],
   providers: [HomeService],
   controllers: [HomeController],

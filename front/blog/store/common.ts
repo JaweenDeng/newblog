@@ -27,7 +27,6 @@ export const commonSlice = createSlice({
   extraReducers:(builder) => {
     builder
     .addCase(setUserInfo.fulfilled, (state, action) => {
-      console.log(action, 'action')
       state.userInfo = action.payload
     })
   }

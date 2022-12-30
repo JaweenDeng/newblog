@@ -4,6 +4,7 @@
  */
 import { Schema } from 'mongoose';
 
+// 文章
 export const articleSchema = new Schema({
   id: { type: String, required: true, unique: true },
   title: { type: String, required: true},
@@ -18,6 +19,19 @@ export const articleSchema = new Schema({
   read:{ type: Number },
   userId:{ type: String, required: true },
 });
+
+// 评论
+export const commentSchema = new Schema({
+  id: { type: String, required: true, unique: true },
+  content: { type: String },
+  status: { type: Number },
+  parentId:{ type: String },
+  createTime:{ type: Number },
+  replyUserName:{type: String},
+  articleId:{type: String},
+  userName:{type: String},
+  replies:{type: Number}
+})
 
 
 
