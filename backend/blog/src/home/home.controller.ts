@@ -22,4 +22,21 @@ export class HomeController {
       }
     }
   }
+
+  @Get('/hotReply/detail')
+  async getHotReplyDetail(@Query() query) {
+    const article = await this.homeService.getHotPelyDetail(query)
+    if (article) {
+      return {
+        code: 0,
+        message: 'Success.',
+        data:article
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
 }

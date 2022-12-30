@@ -1,14 +1,12 @@
 /*
- * @Descripttion: 热评页面
- * @version: 
- * @Author: JW
- * @Date: 2022-12-24 15:24:11
+ * @Author: djw
+ * @Description: 热评详情页
  */
 import { HomeLayout } from '@/components/Layout/HomeLayout'
 import { Col, Row, Pagination } from 'antd'
 import Link from 'next/link'
 import Image from 'next/image'
-import styles from './css/hotReply.module.scss'
+import styles from '../css/hotReply.module.scss'
 import logoImg from '@/public/assets/logo.jpg'
 import { getHotPely } from '@/pages/api/home'
 import { useState } from 'react'
