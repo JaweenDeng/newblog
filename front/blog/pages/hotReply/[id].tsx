@@ -3,7 +3,7 @@
  * @Description: 热评详情页
  */
 import { HomeLayout } from '@/components/Layout/HomeLayout'
-import { Col, Row, Pagination, Empty, Input, Button, message, Modal } from 'antd'
+import { Col, Row, Empty, Input, Button, message, Modal } from 'antd'
 import Link from 'next/link'
 import Image from 'next/image'
 import styles from '../css/hotReply.module.scss'
