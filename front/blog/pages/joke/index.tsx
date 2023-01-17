@@ -1,8 +1,6 @@
 /*
- * @Descripttion: 热评页面
- * @version: 
- * @Author: JW
- * @Date: 2022-12-24 15:24:11
+ * @Author: djw
+ * @Description:笑话
  */
 import { HomeLayout } from '@/components/Layout/HomeLayout'
 import { Col, Row, Pagination } from 'antd'
@@ -13,7 +11,7 @@ import logoImg from '@/public/assets/logo.jpg'
 import { getArticleList } from '@/pages/api/home'
 import { useState } from 'react'
 
-export default function hotReply(props:any) {
+export default function joke(props:any) {
   const [data, setData] = useState(props.data.entry)
   const [total, setTotal] = useState(props.data.total)
   return (
@@ -74,7 +72,7 @@ export default function hotReply(props:any) {
 
 export async function getServerSideProps(context:any){
   const page = context.query && context.query.page ? context.query.page : 1
-  const res = await getArticleList({page, type:4})
+  const res = await getArticleList({page, type:3})
   return {
     props: {
       data:res.data

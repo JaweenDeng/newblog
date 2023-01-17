@@ -11,18 +11,10 @@ import { WechatOutlined, QqOutlined, RightCircleOutlined } from '@ant-design/ico
 import styles from './css/index.module.scss'
 import { HomeLayout } from '@/components/Layout/HomeLayout'
 import { Card } from '@/components/common/Card'
-import { getArticle } from './api/organizers'
-export default function Home() {
-  const [data, setData] = useState([])
-  const getDataInfo = async () => {
-    const res:any = await getArticle({page:1})
-    if (res && res.code === 0) {
-      setData(res.data.entry as [])
-    }
-  }
-  useEffect(() =>{
-    getDataInfo()
-  }, [])
+import { getHomeIndex } from './api/home'
+
+export default function Home(props:any) {
+  const [data, setData] = useState(props.data)
   return (
     <HomeLayout>
       <div className={styles.container}>
@@ -45,87 +37,97 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className={styles.myNote}>
+        { data.note && data.note.length > 0 && <div className={styles.myNote}>
           <div className={styles.cardWrap}>
             <div className={styles.titleWrap}>
               <h3>我的笔记</h3>
-              <Link href="/">
+              <Link href="/note">
                 查看更多
                 <RightCircleOutlined style={{'marginLeft':'10px'}}/>
               </Link>
             </div>
             <div className={styles.cards}>
               {
-                [1, 2, 3, 4, 5, 6, 7, 8].map(() =>{
+                data.note.map((item:any) =>{
                   return (
-                    <Card />
+                    <Card key={item.id} data={item} />
                   )
                 })
               }
             </div>
           </div>
-        </div>
-        <div className={styles.hotReply}>
+        </div>}
+        { data.hotReply && data.hotReply.length > 0 && <div className={styles.hotReply}>
           <div className={styles.cardWrap}>
             <div className={styles.titleWrap}>
               <h3>我的热评</h3>
-              <Link href="/">
+              <Link href="/hotReply">
                 查看更多
                 <RightCircleOutlined style={{'marginLeft':'10px'}}/>
               </Link>
             </div>
             <div className={styles.cards}>
               {
-                [1, 2, 3, 4, 5, 6, 7, 8].map(() =>{
+                data.hotReply.map((item:any) =>{
                   return (
-                    <Card />
+                    <Card key={item.id} data={item} />
                   )
                 })
               }
             </div>
           </div>
-        </div>
-        <div className={styles.myJoke}>
+        </div>}
+        { data.joke && data.joke.length > 0 && <div className={styles.myJoke}>
           <div className={styles.cardWrap}>
             <div className={styles.titleWrap}>
               <h3>我的笑话</h3>
-              <Link href="/">
+              <Link href="/joke">
                 查看更多
                 <RightCircleOutlined style={{'marginLeft':'10px'}}/>
               </Link>
             </div>
             <div className={styles.cards}>
               {
-                [1, 2, 3, 4, 5, 6, 7, 8].map(() =>{
+                data.joke.map((item:any) =>{
                   return (
-                    <Card />
+                    <Card key={item.id} data={item} />
                   )
                 })
               }
             </div>
           </div>
         </div>
-        <div className={styles.myLife}>
+        }
+        { data.life && data.life.length > 0 &&  <div className={styles.myLife}>
           <div className={styles.cardWrap}>
             <div className={styles.titleWrap}>
               <h3>我的生活</h3>
-              <Link href="/">
+              <Link href="/life">
                 查看更多
                 <RightCircleOutlined style={{'marginLeft':'10px'}}/>
               </Link>
             </div>
             <div className={styles.cards}>
               {
-                [1, 2, 3, 4, 5, 6, 7, 8].map(() =>{
+                data.life.map((item:any) =>{
                   return (
-                    <Card />
+                    <Card key={item.id} data={item} />
                   )
                 })
               }
             </div>
           </div>
         </div>
+        }
       </div>
     </HomeLayout>
   )
+}
+export async function getServerSideProps(){
+  const res = await getHomeIndex()
+  return {
+    props: {
+      data:res.data
+    },
+  }
 }

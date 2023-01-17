@@ -2,19 +2,42 @@
  * @Author: djw
  * @Description: 留言板
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { HomeLayout } from '@/components/Layout/HomeLayout'
 import styles from './css/comment.module.scss'
-import { Col, Row, Card, Button, Modal, Input, message } from 'antd'
+import { Col, Row, Card, Button, Modal, Input, message, Empty } from 'antd'
 import { useAppSelector } from '@/store/hooks'
+import { getFirstReply, setFirstReply, setSecordReply, getSecordReply } from '@/pages/api/home'
+import { changeTime } from '@/utils/utils'
 const { TextArea } = Input
 export default function comment() {
   const userInfo = useAppSelector(state => state.common.userInfo)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const [curItem, setCurItem] = useState({})
-  const handleOk = () => {
-
+  const [curItem, setCurItem] = useState<any>({})
+  const [comment, setComment] = useState<any>([])
+  const handleOk = async () => {
+    if (!userInfo.surname) {
+      message.info('请先登录')
+      return 
+    }
+    if (!inputValue) {
+      message.info('请输入评论内容')
+      return 
+    }
+    let res:any = {}
+    if(curItem.id && curItem.userName) {
+      res =  await setSecordReply({content:inputValue, parentId:curItem.id, replyUserName:curItem.userName})
+    } else {
+      res =  await setFirstReply({content:inputValue})
+    }
+    
+    if (res.code === 0) {
+      message.success('发表成功!')
+      getComment()
+      setInputValue('')
+      setIsModalOpen(false)
+    }
   }
   const handleOpen = (row:any) => {
     if (!userInfo.surname) {
@@ -25,6 +48,35 @@ export default function comment() {
     setCurItem(row)
     setIsModalOpen(true)
   }
+  const getComment = async () => {
+    const res = await getFirstReply()
+    if (res && res.data) {
+      setComment(res.data)
+    }
+  }
+  const showMore = async (row:any, index:number) => {
+    let newComment = [
+      ...comment
+    ]
+    if (comment[index] && comment[index]['more'] && comment[index]['more']['length']) {
+      newComment[index] = {
+        ...row,
+        more:[]
+      }
+    } else {
+      const res = await getSecordReply({parentId:row.id})
+      if (res.code === 0) {
+        newComment[index] = {
+          ...row,
+          more:res.data
+        }
+      }
+    }
+    setComment(newComment)
+  }
+  useEffect(() => {
+    getComment()
+  }, [])
   return (
     <HomeLayout>
       <div className={styles.container}>
@@ -40,6 +92,36 @@ export default function comment() {
           <Row>
             <Col span={16} className={styles.listWrap}>
               <h4 className={styles.smallTitle}>所有留言</h4>
+              {
+                  comment.length > 0 ? comment.map((item:any, index:number) => {
+                    return <div className={styles.commentList} key={item.id}>
+                      <h6>{item.userName}:</h6>
+                      <p>{item.content}</p>
+                      <div className={styles.wrap}>
+                        <div>{changeTime(item.createTime)}</div>
+                        <div className={styles.reply} onClick={() => handleOpen(item)}>回复</div>
+                      </div>
+
+                      { item.replies > 0 && <div className={styles.lookeMore} onClick={() => showMore(item, index)}>点击查看更多评论({item.replies})</div>}
+                      { item.more && item.more.length > 0 && <div className={styles.smallWrap}>
+                          {
+                            item.more.map((pItem:any) => {
+                              return (
+                                <div key={pItem.id} className={styles.smallItem}>
+                                  <h6>{pItem.userName}:{pItem.replyUserName}</h6>
+                                  <p>{pItem.content}</p>
+                                  <div className={styles.wrap}>
+                                    <div>{changeTime(pItem.createTime)}</div>
+                                    <div className={styles.reply} onClick={() => handleOpen({id:item.id, userName:pItem.userName})}>回复</div>
+                                  </div>
+                                </div>
+                              )
+                            })
+                          }
+                        </div>}
+                    </div>
+                  }) : <Empty description={'暂无评论'} />
+                }
             </Col>
             <Col span={7} offset={1}>
               <Card title="版主有话说">
@@ -49,15 +131,15 @@ export default function comment() {
                 <p>
                   记得文明交流，禁止发广告~~~
                 </p>
-                <Button type="primary" onClick={() => handleOpen}>发表留言</Button>
+                <Button type="primary" onClick={handleOpen}>发表留言</Button>
               </Card>
             </Col>
           </Row>
         </div>
         <Modal title="发表评论" open={isModalOpen} footer={null} onOk={handleOk} onCancel={() => {setIsModalOpen(false)}}>
-          { isModalOpen && <TextArea rows={4} value={inputValue} className={styles.mt20} placeholder={'发布您对该文章的看法'} onChange={(e) => {setInputValue(e.target.value)}} /> }
+          { isModalOpen && <TextArea rows={4} value={inputValue} className={styles.mt20} placeholder={'发布您的留言'} onChange={(e) => {setInputValue(e.target.value)}} /> }
           <div className={`${styles.textRight} ${styles.mt20}`}>
-            <Button type="primary" onClick={handleOk}>
+            <Button type="primary" onClick={handleOk} >
               发布
             </Button>
           </div>

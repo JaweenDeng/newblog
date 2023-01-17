@@ -32,6 +32,7 @@ export interface IBeforeCreate {
   id?:number
 }
 
+// 评论
 export interface comment extends Document {
   readonly id: String,
   readonly content: String,
@@ -40,5 +41,16 @@ export interface comment extends Document {
   readonly createTime:Number,
   readonly replyUserName:String,
   readonly articleId:String,
+  readonly userName:String
+}
+
+// 留言
+export interface reply extends Document {
+  readonly id: String,
+  readonly content: String,
+  readonly status: Number,
+  readonly parentId:String,
+  readonly createTime:Number,
+  readonly replyUserName:String,
   readonly userName:String
 }

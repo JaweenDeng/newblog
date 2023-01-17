@@ -33,5 +33,15 @@ export const commentSchema = new Schema({
   replies:{type: Number}
 })
 
-
+// 留言
+export const replySchema = new Schema({
+  id: { type: String, required: true, unique: true },
+  content: { type: String },
+  status: { type: Number },
+  parentId:{ type: String },
+  createTime:{ type: Number },
+  replyUserName:{type: String},
+  userName:{type: String},
+  replies:{type: Number}
+})
 

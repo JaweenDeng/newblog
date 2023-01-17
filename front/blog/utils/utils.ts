@@ -8,7 +8,7 @@
  * @param {number}: time 10位时间戳
  * @return {*}: 转换后的时间格式
  */
-export const changeTime = (timestamp:number):string => {
+export const changeTime = (timestamp:number, type?:number=0):string => {
   const date = new Date(timestamp * 1000) 
   const year = date.getFullYear() 
   const month = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) 
@@ -16,5 +16,8 @@ export const changeTime = (timestamp:number):string => {
   const hour = date.getHours()
   const min = date.getMinutes()
   const secord = date.getSeconds()
+  if(type === 1) {
+    return `${year}-${month}-${month}`
+  }
   return `${year}-${month}-${month} ${hour}:${min}:${secord}`
 }

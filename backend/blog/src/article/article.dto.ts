@@ -18,7 +18,8 @@ export class CreateArticleDTO {
 // 文章分页查询
 export class ListArticleDTO {
   readonly page:number;
-  readonly pageSize?:number
+  readonly pageSize?:number;
+  readonly type?: number;
 }
 
 // 新建文件评论
