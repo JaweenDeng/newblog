@@ -27,3 +27,8 @@ export class RegisterDTO {
   readonly email: string;
   readonly phone: string;
 }
+
+export class statusDTO {
+  readonly status: number;
+  readonly userId: number;
+}

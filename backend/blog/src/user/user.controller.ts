@@ -7,6 +7,7 @@ import { CreateUserDTO, EditUserDTO, LoginDTO, RegisterDTO } from './user.dto';
 import { User } from './user.interface';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
+import { ListArticleDTO } from '../article/article.dto';
 interface UserResponse<T = unknown> {
   code: number;
   data?: T;
@@ -19,16 +20,60 @@ export class UserController {
     private readonly userService: UserService,
     ) {}
 
-  // GET /user/users
+  // 获取所有用户列表
   @UseGuards(AuthGuard('jwt'))
   @Get('users')
-  async findAll(@Request() req): Promise<UserResponse<User[]>> {
-    const userId = await this.userService.getToken(req)
-    return {
-      code: 0,
-      data: await this.userService.findAll(),
-      message: 'Success.'
-    };
+  async findAll(@Request() req, @Body() body): Promise<UserResponse<any>> {
+    const data = await this.userService.getUserList(req, body)
+    if (data) {
+      return {
+        code: 0,
+        message: 'Success.',
+        data
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
+
+  // 修改用户状态
+  @UseGuards(AuthGuard('jwt'))
+  @Post('updateUser')
+  async updateUser(@Body() body): Promise<UserResponse<any>> {
+    const data = await this.userService.updateUser(body)
+    if (data) {
+      return {
+        code: 0,
+        message: 'Success.',
+        data
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
+  // 删除用户
+  @UseGuards(AuthGuard('jwt'))
+  @Post('deleteUser')
+  async deleteUser(@Body() body): Promise<UserResponse<any>> {
+    const data = await this.userService.deleteUser(body)
+    if (data) {
+      return {
+        code: 0,
+        message: 'Success.',
+        data
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
   }
 
   // GET /user/:_id

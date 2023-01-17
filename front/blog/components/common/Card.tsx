@@ -10,10 +10,11 @@ import { ClockCircleOutlined, MessageOutlined, EyeOutlined } from '@ant-design/i
 import styles from './css/Card.module.scss'
 import logoImg from '@/public/assets/logo.jpg'
 import { changeTime } from '@/utils/utils'
+import { postUrl } from '@/config/config'
 export const Card = ({ data }:any) => {
   return (
-    <Link href="/" className={styles.card}>
-      <Image src={logoImg} alt="" width={280} height={140} />
+    <Link href={`/articleDetail/${data.id}`} className={styles.card}>
+      { data && data.poster ? <Image src={`${postUrl}${data.poster}`} alt="" width={280} height={140} /> : <Image src={logoImg} alt="" width={280} height={140} /> }
       <div className={styles.cardContent}>
         <h4>{ data.title }</h4>
         <p>{ data.description }</p>

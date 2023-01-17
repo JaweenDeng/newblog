@@ -1,13 +1,13 @@
 /*
  * @Author: djw
- * @Description: 评论管理
+ * @Description: 留言管理
  */
 import { useEffect, useState } from 'react'
 import { Table, Image, Button, message, Modal, Upload, Switch } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
 import { OrganLayout } from '@/components/Layout/OrganLayout' 
-import { getCommentList, deleteComment, updateComment } from '../../api/organizers'
+import { getReplyList, deleteReply, updateReply } from '../../api/organizers'
 import { articleType, postUrl } from '@/config/config'
 import { changeTime } from '@/utils/utils'
 interface DataType {
@@ -27,25 +27,19 @@ export default function Article () {
       align:'center'
     },
     {
-      title: '评论内容',
+      title: '留言内容',
       dataIndex: 'content',
       key: 'content',
       align:'center'
     },
     {
-      title: '评论文章ID',
-      dataIndex: 'articleId',
-      key: 'articleId',
-      align:'center'
-    },
-    {
-      title: '评论人',
+      title: '留言人',
       dataIndex: 'userName',
       key: 'userName',
       align:'center'
     },
     {
-      title: '被评论人',
+      title: '被回复人',
       dataIndex: 'replyUserName',
       key: 'replyUserName',
       align:'center'
@@ -74,7 +68,7 @@ export default function Article () {
   ]
   const [data, setData] = useState([])
   const getListHandle = async () => {
-    const res:any = await getCommentList({page:current})
+    const res:any = await getReplyList({page:current})
     if (res && res.code === 0) {
       setTotal(res.data.total)
       setData(res.data.entry as [])
@@ -87,9 +81,9 @@ export default function Article () {
   // 删除
   const handleDelete = (id:number, parentId:number) => {
     Modal.info({
-      title: '您确定要删除该评论吗?',
+      title: '您确定要删除该留言吗?',
       onOk:async () => {
-        const res = await deleteComment(id, {parentId})
+        const res = await deleteReply(id, {parentId})
         if (res && res.code === 0) {
           message.success('删除成功!')
           getListHandle()
@@ -99,7 +93,7 @@ export default function Article () {
   }
   // 上下架
   const handleStatus = async(params:any) => {
-    const res = await updateComment(params)
+    const res = await updateReply(params)
     if (res && res.code === 0) {
       message.success('修改成功!')
       getListHandle()

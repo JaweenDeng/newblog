@@ -9,7 +9,8 @@ export interface User extends Document {
   readonly password: string;
   readonly email: string;
   readonly phone: string;
-  readonly userId: string
+  readonly userId: string;
+  readonly status:number
 }
 
 export interface IPayload {

@@ -28,3 +28,9 @@ export class CreateCommentDTO {
   readonly parentId?:String
   readonly articleId:String
 }
+
+export class statusDTO {
+  readonly id: Number
+  readonly status:Number
+  readonly parentId:Number
+}

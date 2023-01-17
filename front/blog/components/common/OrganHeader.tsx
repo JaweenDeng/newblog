@@ -12,6 +12,10 @@ export const OrganHeader:React.FC = () => {
   useEffect(() => {
     if (router.pathname === '/organizers/comment') {
       setCurrent('评论管理')
+    } else if (router.pathname === '/organizers/reply') {
+      setCurrent('留言管理')
+    }else if (router.pathname === '/organizers/user') {
+      setCurrent('用户管理')
     }
   })
   return (

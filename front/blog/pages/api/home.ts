@@ -20,7 +20,7 @@ export const getHotPely = (params?:any) => {
 
 // 获取热评数据
 export const getHotPelyDetail = (params?:any) => {
-  return Request.get(`/home/hotReply/detail?${qs.stringify(params)}`)
+  return Request.get(`/home/getArticleDetail?${qs.stringify(params)}`)
 }
 
 // 获取一级评论数

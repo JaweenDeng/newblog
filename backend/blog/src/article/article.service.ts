@@ -2,8 +2,8 @@ import { Injectable, Request } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserService } from '../user/user.service';
-import { CreateArticleDTO, ListArticleDTO } from './article.dto';
-import { article, IList, IBeforeCreate, comment } from './article.interface';
+import { CreateArticleDTO, ListArticleDTO, statusDTO } from './article.dto';
+import { article, IList, IBeforeCreate, comment, reply } from './article.interface';
 import * as ExcelJS from 'exceljs';
 @Injectable()
 export class ArticleService {
@@ -11,6 +11,7 @@ export class ArticleService {
     private readonly userService: UserService,
     @InjectModel('article') private readonly articleModel: Model<article>,
     @InjectModel('comment') private readonly commentModel: Model<comment>,
+    @InjectModel('reply') private readonly replyModel: Model<reply>,
   ){}
 
   // 文章列表列表
@@ -109,8 +110,50 @@ export class ArticleService {
   }
 
   // 删除评论
-  async deleteComment(id: string): Promise<boolean> {
+  async deleteComment(id: string, body:statusDTO): Promise<boolean> {
     const articles = await this.commentModel.deleteOne({id})
+    if (body.parentId) {
+      const row = await this.commentModel.find({parentId:body.id, status:1})
+      await this.commentModel.updateOne({id:body.parentId}, {replies:row.length})
+    }
     return articles ? true : false
   }
+
+  // 评论下架
+  async updateComment(body:statusDTO): Promise<boolean> {
+    const articles = await this.commentModel.updateOne({id:body.id}, {status:body.status})
+    if (body.parentId) {
+      const row = await this.commentModel.find({parentId:body.id, status:1})
+      await this.commentModel.updateOne({id:body.parentId}, {replies:row.length})
+    }
+    return articles ? true : false
+  }
+
+  // 留言列表
+  async getReplyList (@Request() req, body: ListArticleDTO) {
+    const total = await this.replyModel.find().count()
+    const articles = await this.replyModel.find().skip(10*((body.page-1))).limit(body.pageSize || 10)
+    return { entry:articles, total}
+  }
+
+  // 删除留言
+  async deleteReply(id: string, body:statusDTO): Promise<boolean> {
+    const articles = await this.replyModel.deleteOne({id})
+    if (body.parentId) {
+      const row = await this.replyModel.find({parentId:body.id, status:1})
+      await this.replyModel.updateOne({id:body.parentId}, {replies:row.length})
+    }
+    return articles ? true : false
+  }
+
+  // 留言下架
+  async updateReply(body:statusDTO): Promise<boolean> {
+    const articles = await this.replyModel.updateOne({id:body.id}, {status:body.status})
+    if (body.parentId) {
+      const row = await this.replyModel.find({parentId:body.id, status:1})
+      await this.replyModel.updateOne({id:body.parentId}, {replies:row.length})
+    }
+    return articles ? true : false
+  }
+  
 }

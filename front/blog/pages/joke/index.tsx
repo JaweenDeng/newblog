@@ -33,7 +33,7 @@ export default function joke(props:any) {
                 {
                   data.map((item:any, index:number) =>{
                     return (
-                      <Link href={`/hotReply/${item.id}`} className={styles.listItem} key={index}>
+                      <Link href={`/articleDetail/${item.id}`} className={styles.listItem} key={index}>
                         <h5 dangerouslySetInnerHTML={{ __html: item.content }}></h5>
                         <p>- {item.title}</p>
                       </Link>
@@ -46,7 +46,7 @@ export default function joke(props:any) {
                 total={total}
                 showSizeChanger={false}
                 itemRender={
-                  (page, type) => type === 'page' && <Link href={`/hotReply?page=${page}`}>{page}</Link> 
+                  (page, type) => type === 'page' && <Link href={`/joke?page=${page}`}>{page}</Link> 
                                   
                 }
               />

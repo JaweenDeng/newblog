@@ -54,15 +54,15 @@
       height: 60%;
       background: #ddd;
     }
-    &::after{
-      position: absolute;
-      top:50%;
-      right: 0px;
-      transform: translateY(-50%);
-      content:'';
-      width: 1px;
-      height: 60%;
-      background: #ddd;
-    }
+    // &::after{
+    //   position: absolute;
+    //   top:50%;
+    //   right: 0px;
+    //   transform: translateY(-50%);
+    //   content:'';
+    //   width: 1px;
+    //   height: 60%;
+    //   background: #ddd;
+    // }
   }
 }

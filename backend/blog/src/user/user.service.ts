@@ -7,10 +7,10 @@ import { Injectable, Request } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDTO, EditUserDTO, LoginDTO, RegisterDTO } from './user.dto';
+import { CreateUserDTO, EditUserDTO, LoginDTO, RegisterDTO, statusDTO } from './user.dto';
 import { User, IPayload } from './user.interface';
 import * as bcrypt from 'bcrypt';
-
+import { ListArticleDTO } from '../article/article.dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -59,7 +59,7 @@ export class UserService {
   async login(body: LoginDTO): Promise<string|null> {
     const { phone, password } = body
     const user = await this.userModel.findOne({phone});
-    if (user) {
+    if (user && (user.status === 1)) {
       const isPassword = await bcrypt.compare(password, user.password)
       if (isPassword) {
         return this.jwtService.sign({username: user.surname, sub: user.userId})
@@ -73,7 +73,7 @@ export class UserService {
     const { password } = body;
     const hash = await bcrypt.hash(password, 10)
     const users = await this.userModel.find();
-    const user = await this.userModel.create({...body, userId:users.length+1, password:hash});
+    const user = await this.userModel.create({...body, userId:users.length+1, password:hash, status:1});
     return user ? true : false
   }
 
@@ -93,5 +93,25 @@ export class UserService {
       }
     } 
     return null
+  }
+
+  // 用户列表
+  async getUserList (@Request() req, body: ListArticleDTO): Promise<any> {
+    const page = body.page ? body.page : 1
+    const total = await this.userModel.find().count()
+    const users = await this.userModel.find().skip(10*((page-1))).limit(body.pageSize || 10)
+    return { entry:users, total}
+  }
+
+  // 用户状态修改
+  async updateUser(body:statusDTO): Promise<boolean> {
+    const user = await this.userModel.updateOne({userId:body.userId}, {status:body.status})
+    return user ? true : false
+  }
+
+  // 用户删除
+  async deleteUser(body:statusDTO): Promise<boolean> {
+    const user = await this.userModel.deleteOne({userId:body.userId})
+    return user ? true : false
   }
 }

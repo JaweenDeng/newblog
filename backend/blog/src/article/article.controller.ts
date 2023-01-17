@@ -156,7 +156,7 @@ export class ArticleController {
     }
   }
 
-  // 获取当前用户创建文章列表
+  // 评论列表
   @UseGuards(AuthGuard('jwt'))
   @Get('CommentList')
   async getCommentList(@Request() req, @Query() query) {
@@ -178,8 +178,81 @@ export class ArticleController {
   // 评论删除
   @UseGuards(AuthGuard('jwt'))
   @Post('deleteComment/:id')
-  async deleteComment(@Param('id') id: string) {
-    const res = await this.articleService.deleteComment(id)
+  async deleteComment(@Param('id') id: string, @Body() body) {
+    const res = await this.articleService.deleteComment(id, body)
+    if (res) {
+      return {
+        code: 0,
+        message: 'Success.',
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
+
+  // 评论下架
+  @UseGuards(AuthGuard('jwt'))
+  @Post('updateComment')
+  async updateComment(@Body() body) {
+    const res = await this.articleService.updateComment(body)
+    if (res) {
+      return {
+        code: 0,
+        message: 'Success.',
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
+
+  // 留言列表
+  @UseGuards(AuthGuard('jwt'))
+  @Get('getReplyList')
+  async getReplyList(@Request() req, @Query() query) {
+    const article = await this.articleService.getReplyList(req, query)
+    if (article) {
+      return {
+        code: 0,
+        message: 'Success.',
+        data:article
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
+
+  // 留言删除
+  @UseGuards(AuthGuard('jwt'))
+  @Post('deleteReply/:id')
+  async deleteReply(@Param('id') id: string, @Body() body) {
+    const res = await this.articleService.deleteReply(id, body)
+    if (res) {
+      return {
+        code: 0,
+        message: 'Success.',
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
+
+  // 留言下架
+  @UseGuards(AuthGuard('jwt'))
+  @Post('updateReply')
+  async updateReply(@Body() body) {
+    const res = await this.articleService.updateReply(body)
     if (res) {
       return {
         code: 0,

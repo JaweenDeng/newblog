@@ -1,6 +1,6 @@
 /*
  * @Author: djw
- * @Description: 热评详情页
+ * @Description: 文章详情页
  */
 import { HomeLayout } from '@/components/Layout/HomeLayout'
 import { Col, Row, Empty, Input, Button, message, Modal } from 'antd'
@@ -24,6 +24,7 @@ export default function hotReply(props:any) {
   const [inputValue, setInputValue] = useState('')
   const [curItem, setCurItem] = useState({})
   const getComment = async () => {
+    
     const res:any = await getFirstComment({id:router.query.id})
     if (res && res.code === 0) {
       setComment(res.data)
@@ -87,7 +88,11 @@ export default function hotReply(props:any) {
     setComment(newComment)
   }
   useEffect(() => {
-    getComment()
+    if (props.data && !props.data.status) {
+      return message.error('该文章已下架!')
+    } else {
+      getComment()
+    }
   }, [])
   return (
     <HomeLayout>
@@ -103,7 +108,7 @@ export default function hotReply(props:any) {
         <div className={styles.content}>
           <Row>
             <Col span={16} className={styles.listWrap}>
-              <h4 className={styles.smallTitle}>热评详情</h4>
+              <h4 className={styles.smallTitle}>文章详情</h4>
               <div className={styles.list}>
                 <h2 dangerouslySetInnerHTML={{ __html: data.content }}></h2>
                 <p className={styles.textRight}>- {data.title}</p>

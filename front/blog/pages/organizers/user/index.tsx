@@ -1,13 +1,13 @@
 /*
  * @Author: djw
- * @Description: 评论管理
+ * @Description: 用户管理
  */
 import { useEffect, useState } from 'react'
 import { Table, Image, Button, message, Modal, Upload, Switch } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import Link from 'next/link'
 import { OrganLayout } from '@/components/Layout/OrganLayout' 
-import { getCommentList, deleteComment, updateComment } from '../../api/organizers'
+import { getUserList, deleteUser, updateUser } from '../../api/organizers'
 import { articleType, postUrl } from '@/config/config'
 import { changeTime } from '@/utils/utils'
 interface DataType {
@@ -16,38 +16,32 @@ interface DataType {
   dataIndex:string;
 }
 
-export default function Article () {
+export default function user () {
   const [current, setCurrent] = useState(1)
   const [total, setTotal] = useState(0)
   const columns: ColumnsType<DataType> = [
     {
-      title: 'Id',
-      dataIndex: 'id',
-      key: 'id',
+      title: 'userId',
+      dataIndex: 'userId',
+      key: 'userId',
       align:'center'
     },
     {
-      title: '评论内容',
-      dataIndex: 'content',
-      key: 'content',
+      title: '用户名',
+      dataIndex: 'surname',
+      key: 'surname',
       align:'center'
     },
     {
-      title: '评论文章ID',
-      dataIndex: 'articleId',
-      key: 'articleId',
+      title: '手机号',
+      dataIndex: 'phone',
+      key: 'phone',
       align:'center'
     },
     {
-      title: '评论人',
-      dataIndex: 'userName',
-      key: 'userName',
-      align:'center'
-    },
-    {
-      title: '被评论人',
-      dataIndex: 'replyUserName',
-      key: 'replyUserName',
+      title: '邮箱',
+      dataIndex: 'email',
+      key: 'email',
       align:'center'
     },
     {
@@ -55,26 +49,19 @@ export default function Article () {
       dataIndex: 'status',
       key: 'status',
       align:'center',
-      render: (_, record:any) => <Switch checked={record.status>0} onChange={(checked) => handleStatus({status:checked ? 1 : 0, id:+record.id, parentId:record.parentId})}></Switch>
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      key: 'createTime',
-      align:'center',
-      render: (text) => <span>{changeTime(text)}</span>
+      render: (_, record:any) => <Switch checked={record.status>0} onChange={(checked) => handleStatus({status:checked ? 1 : 0, userId:+record.userId})}></Switch>
     },
     {
       title: '操作',
       dataIndex: 'handle',
       key: 'handle',
       align:'center',
-      render: (_, record:any) => <><span onClick={() => handleDelete(record.id, record.parentId)}>删除</span></>
+      render: (_, record:any) => <><span onClick={() => handleDelete(record.userId)}>删除</span></>
     },
   ]
   const [data, setData] = useState([])
   const getListHandle = async () => {
-    const res:any = await getCommentList({page:current})
+    const res:any = await getUserList({page:current})
     if (res && res.code === 0) {
       setTotal(res.data.total)
       setData(res.data.entry as [])
@@ -85,11 +72,11 @@ export default function Article () {
     setCurrent(pagination.current)
   }
   // 删除
-  const handleDelete = (id:number, parentId:number) => {
+  const handleDelete = (id:number) => {
     Modal.info({
-      title: '您确定要删除该评论吗?',
+      title: '您确定要删除该用户吗?',
       onOk:async () => {
-        const res = await deleteComment(id, {parentId})
+        const res = await deleteUser({userId:id})
         if (res && res.code === 0) {
           message.success('删除成功!')
           getListHandle()
@@ -99,7 +86,7 @@ export default function Article () {
   }
   // 上下架
   const handleStatus = async(params:any) => {
-    const res = await updateComment(params)
+    const res = await updateUser(params)
     if (res && res.code === 0) {
       message.success('修改成功!')
       getListHandle()
@@ -111,7 +98,7 @@ export default function Article () {
   return (
     <OrganLayout>
       <>
-      <Table columns={columns} dataSource={data} rowKey={'id'} pagination={{total, showTotal:(total) => `共${total}条`}} onChange={ handleChange } />
+      <Table columns={columns} dataSource={data} rowKey={'userId'} pagination={{total, showTotal:(total) => `共${total}条`}} onChange={ handleChange } />
       </>
     </OrganLayout>
   )

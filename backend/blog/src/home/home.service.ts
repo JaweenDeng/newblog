@@ -15,10 +15,10 @@ export class HomeService {
 
   // 首页数据
   async getHomeIndex(@Request() req) {
-    const life = await this.articleModel.find({type:1}).limit(8)
-    const note = await this.articleModel.find({type:2}).limit(8)
-    const joke = await this.articleModel.find({type:3}).limit(8)
-    const hotReply = await this.articleModel.find({type:4}).limit(8)
+    const life = await this.articleModel.find({type:1, status:1}).limit(8)
+    const note = await this.articleModel.find({type:2, status:1}).limit(8)
+    const joke = await this.articleModel.find({type:3, status:1}).limit(8)
+    const hotReply = await this.articleModel.find({type:4, status:1}).limit(8)
     return {
       life,
       note,
@@ -27,15 +27,10 @@ export class HomeService {
     }
   }  
 
-  // 热评列表
-  async getHotPely(@Request() req, body: ListArticleDTO) {
-    const total = await this.articleModel.find({type:4}).count()
-    const articles = await this.articleModel.find({type:4}).skip(10*((body.page-1))).limit(body.pageSize || 10)
-    return { entry:articles, total}
-  }
+  
 
   // 热评详情
-  async getHotPelyDetail(id:number) {
+  async getArticleDetail(id:number) {
     const articles = await this.articleModel.find({id:+id})
     if (articles && articles.length) {
       return articles[0]
@@ -45,13 +40,13 @@ export class HomeService {
   }
   // 文章列表
   async getArticleList(@Request() req, body: ListArticleDTO) {
-    const total = await this.articleModel.find({type:body.type}).count()
-    const articles = await this.articleModel.find({type:body.type}).skip(10*((body.page-1))).limit(body.pageSize || 10)
+    const total = await this.articleModel.find({type:body.type, status:1}).count()
+    const articles = await this.articleModel.find({type:body.type, status:1}).skip(10*((body.page-1))).limit(body.pageSize || 10)
     return { entry:articles, total}
   }
   // 评论一级列表
   async getFirstComment(id:number) {
-    const comments = await this.commentModel.find({articleId:id, parentId:0})
+    const comments = await this.commentModel.find({articleId:id, parentId:0, status:1})
     return comments
   }
 
@@ -65,7 +60,7 @@ export class HomeService {
       createTime:nowTime, 
       id,
       parentId:0,
-      status:0,
+      status:1,
       replyUserName:null,
       replies:0
     }
@@ -82,9 +77,9 @@ export class HomeService {
       userName:userItem[0].surname, 
       createTime:nowTime, 
       id,
-      status:0,
+      status:1,
     }
-    const parentComment = await this.commentModel.find({id:body.parentId})
+    const parentComment = await this.commentModel.find({id:body.parentId, status:1})
     await this.commentModel.updateOne({id:body.parentId}, {replies:parentComment[0]['replies'] ? (parentComment[0]['replies']) +1 : 1})
     const comment = await this.commentModel.create(params)
     return comment ? true : false
@@ -92,7 +87,7 @@ export class HomeService {
 
   // 评论二级列表
   async getSecordComment(id:number, parentId:number) {
-    const comments = await this.commentModel.find({articleId:id, parentId:parentId})
+    const comments = await this.commentModel.find({articleId:id, parentId:parentId, status:1})
     return comments
   }
 
@@ -111,7 +106,7 @@ export class HomeService {
 
   // 评论一级列表
   async getFirstReply(id:number) {
-    const reply = await this.replyModel.find({parentId:0})
+    const reply = await this.replyModel.find({parentId:0, status:1})
     return reply
   }
 
@@ -125,7 +120,7 @@ export class HomeService {
       createTime:nowTime, 
       id,
       parentId:0,
-      status:0,
+      status:1,
       replyUserName:null,
       replies:0
     }
@@ -142,7 +137,7 @@ export class HomeService {
       userName:userItem[0].surname, 
       createTime:nowTime, 
       id,
-      status:0,
+      status:1,
     }
     const parentComment = await this.replyModel.find({id:body.parentId})
     await this.replyModel.updateOne({id:body.parentId}, {replies:parentComment[0]['replies'] ? (parentComment[0]['replies']) +1 : 1})
@@ -152,7 +147,7 @@ export class HomeService {
 
   // 评论二级列表
   async getSecordReply(parentId:number) {
-    const comments = await this.replyModel.find({parentId:parentId})
+    const comments = await this.replyModel.find({parentId:parentId, status:1})
     return comments
   }
 

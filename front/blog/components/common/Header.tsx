@@ -46,10 +46,10 @@ export const Header = () => {
       label:'留言',
       key:'/comment'
     },
-    {
-      label:'关于我',
-      key:'/about'
-    },
+    // {
+    //   label:'关于我',
+    //   key:'/about'
+    // },
   ]
   return (
     <header className={styles.header}>

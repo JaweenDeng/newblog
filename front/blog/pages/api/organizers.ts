@@ -41,6 +41,42 @@ export const getCommentList = (params?:any) => {
 }
 
 // 评论删除
-export const deleteComment = (id:number) => {
-  return Request.post(`/article/deleteComment/${id}`)
+export const deleteComment = (id:number, params:any) => {
+  return Request.post(`/article/deleteComment/${id}`, params)
+}
+
+// 评论状态
+export const updateComment = (params:any) => {
+  return Request.post(`/article/updateComment`, params)
+}
+
+// 留言列表 getReplyList
+export const getReplyList = (params?:any) => {
+  return Request.get(`/article/getReplyList?${qs.stringify(params)}`)
+}
+
+// 留言删除
+export const deleteReply = (id:number, params:any) => {
+  return Request.post(`/article/deleteReply/${id}`, params)
+}
+
+// 留言状态
+export const updateReply = (params:any) => {
+  return Request.post(`/article/updateReply`, params)
+}
+
+
+// 用户列表
+export const getUserList = (params:any) => {
+  return Request.get(`/user/users`, params)
+}
+
+// 用户状态
+export const updateUser = (params:any) => {
+  return Request.post(`/user/updateUser`, params)
+}
+
+// 删除用户
+export const deleteUser = (params:any) => {
+  return Request.post(`/user/deleteUser`, params)
 }

@@ -155,7 +155,7 @@ export default function articleId() {
           name="status"
           valuePropName="checked"
         >
-          <Switch  />
+          <Switch />
         </Form.Item>
         <Form.Item
           label="文章详情"
