@@ -1,7 +1,7 @@
 import { Injectable, Request } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ListArticleDTO, CreateCommentDTO } from '../article/article.dto';
+import { ListArticleDTO, CreateCommentDTO, statusDTO } from '../article/article.dto';
 import { article, comment, reply } from '../article/article.interface';
 import { UserService } from '../user/user.service';
 @Injectable()
@@ -29,7 +29,7 @@ export class HomeService {
 
   
 
-  // 热评详情
+  // 文章详情
   async getArticleDetail(id:number) {
     const articles = await this.articleModel.find({id:+id})
     if (articles && articles.length) {
@@ -44,6 +44,14 @@ export class HomeService {
     const articles = await this.articleModel.find({type:body.type, status:1}).skip(10*((body.page-1))).limit(body.pageSize || 10)
     return { entry:articles, total}
   }
+
+  // 统计阅读数
+  async setArticleRead(body: statusDTO) {
+    const articles = await this.articleModel.findOne({id:body.id})
+    const isSuccess = await this.articleModel.updateOne({id:body.id}, {read:articles.read+1})
+    return isSuccess ? true :false
+  }
+
   // 评论一级列表
   async getFirstComment(id:number) {
     const comments = await this.commentModel.find({articleId:id, parentId:0, status:1})

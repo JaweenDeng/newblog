@@ -8,7 +8,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import styles from '../css/hotReply.module.scss'
 import logoImg from '@/public/assets/logo.jpg'
-import { getHotPelyDetail, getFirstComment, setFirstCommnet, setSecordComment, getSecordComment } from '@/pages/api/home'
+import { getHotPelyDetail, getFirstComment, setFirstCommnet, setSecordComment, getSecordComment, setArticleRead } from '@/pages/api/home'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAppSelector } from '@/store/hooks'
@@ -22,7 +22,10 @@ export default function hotReply(props:any) {
   const [inputVal, setInputVal] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const [curItem, setCurItem] = useState({})
+  const [curItem, setCurItem] = useState({
+    id:'',
+    userName:''
+  })
   const getComment = async () => {
     
     const res:any = await getFirstComment({id:router.query.id})
@@ -91,6 +94,7 @@ export default function hotReply(props:any) {
     if (props.data && !props.data.status) {
       return message.error('该文章已下架!')
     } else {
+
       getComment()
     }
   }, [])
@@ -181,6 +185,7 @@ export default function hotReply(props:any) {
 
 export async function getServerSideProps(context:any){
   const id = context.params && context.params.id ? context.params.id : 1
+  await setArticleRead({id})
   const res = await getHotPelyDetail({id})
   return {
     props: {

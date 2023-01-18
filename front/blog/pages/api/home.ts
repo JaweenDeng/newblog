@@ -63,3 +63,9 @@ export const setSecordReply = (params:any) => {
 export const getSecordReply = (params:any) => {
   return Request.get(`/home/getSecordReply?${qs.stringify(params)}`)
 }
+
+
+// 统计阅读量
+export const setArticleRead = (params:any) => {
+  return Request.post(`/home/setArticleRead`, params)
+}

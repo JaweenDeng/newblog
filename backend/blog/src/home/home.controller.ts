@@ -189,4 +189,20 @@ export class HomeController {
     }
   }
 
+  @Post('/setArticleRead')
+  async setArticleRead(@Body() body) {
+    const comment = await this.homeService.setArticleRead(body)
+    if (comment) {
+      return {
+        code: 0,
+        message: 'Success.',
+        data:comment
+      }
+    } else {
+      return {
+        code: 1,
+        message: '系统错误，请稍后再试!',
+      }
+    }
+  }
 }
