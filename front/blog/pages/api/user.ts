@@ -7,19 +7,19 @@ import { ILogin } from '../../types/users';
 
 // 登录接口
 export const toLogin = (params:ILogin) => {
-  return Request.post(`/user/login`, params)
+  return Request.post(`/api/user/login`, params)
 }
 // 注册接口
 export const toRegister = (params:ILogin) => {
-  return Request.post(`/user/register`, params)
+  return Request.post(`/api/user/register`, params)
 }
 
 // 上传接口
 export const upload = (params:any) => {
-  return Request.post(`/article/upload`, params)
+  return Request.post(`/api/article/upload`, params)
 }
 
 // 获取用户信息
 export const getUserInfo = () => {
-  return Request.post(`/user/getUserInfo`)
+  return Request.post(`/api/user/getUserInfo`)
 }

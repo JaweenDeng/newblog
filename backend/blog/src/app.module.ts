@@ -8,7 +8,7 @@ import { ArticleModule } from './article/article.module';
 import { HomeModule } from './home/home.module';
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/blog', { useNewUrlParser: true }),
+    MongooseModule.forRoot('mongodb://127.0.0.1/blog', { useNewUrlParser: true }),
     UserModule,
     AuthModule,
     ArticleModule,
